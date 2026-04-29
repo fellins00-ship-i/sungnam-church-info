@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="성남교회 장년회 회원정보 요청 접수 시스템" />
+  <title>성남교회 장년회 정보 요청</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: #f6f1e7;
+      color: #2d1f15;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    button, input, textarea { font-family: inherit; }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .pre-title {
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      color: #8b7355;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+    h1 {
+      font-family: 'Nanum Myeongjo', serif;
+      font-size: 30px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.02em;
+      color: #2d1f15;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #8b7355;
+      margin-top: 10px;
+      letter-spacing: 0.02em;
+    }
+    .divider {
+      width: 40px;
+      height: 1px;
+      background-color: #8b7355;
+      margin: 28px auto 0;
+      opacity: 0.5;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      margin-bottom: 28px;
+      border-bottom: 1px solid #e5dcc8;
+    }
+    .tab {
+      flex: 1;
+      padding: 14px 20px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: #8b7355;
+      font-weight: 400;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: -1px;
+    }
+    .tab.active {
+      border-bottom-color: #3d4f3a;
+      color: #3d4f3a;
+      font-weight: 700;
+    }
+
+    /* Card */
+    .card {
+      background-color: #fdfaf3;
+      border: 1px solid #e5dcc8;
+      padding: 32px 28px;
+    }
+
+    /* Form fields */
+    .field {
+      margin-bottom: 18px;
+    }
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 7px;
+      color: #2d1f15;
+      letter-spacing: 0.02em;
+    }
+    .field input,
+    .field textarea {
+      width: 100%;
+      padding: 11px 13px;
+      font-size: 15px;
+      border: 1px solid #e5dcc8;
+      background: #fff;
+      color: #2d1f15;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .field textarea {
+      resize: vertical;
+      line-height: 1.6;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+    .field input:focus,
+    .field textarea:focus {
+      border-color: #3d4f3a;
+    }
+
+    .row {
+      display: flex;
+      gap: 14px;
+    }
+    .row > div {
+      flex: 1;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: #3d4f3a;
+      color: #fff;
+      border: none;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: #2d3d2a;
+    }
+    .btn-primary:disabled {
+      background: #8b7355;
+      cursor: wait;
+    }
+    .btn-outline {
+      padding: 7px 14px;
+      background: transparent;
+      color: #3d4f3a;
+      border: 1px solid #3d4f3a;
+      font-size: 12px;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: all 0.2s;
+    }
+    .btn-outline:hover {
+      background: #3d4f3a;
+      color: #fff;
+    }
+
+    /* Error */
+    .error {
+      color: #a14545;
+      font-size: 13px;
+      margin-bottom: 16px;
+      padding: 10px 14px;
+      background: #faf1f1;
+      border: 1px solid rgba(161, 69, 69, 0.2);
+    }
+
+    /* Success */
+    .success-card {
+      text-align: center;
+      padding: 56px 32px;
+    }
+    .success-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: #3d4f3a;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+    }
+    .success-card h2 {
+      font-family: 'Nanum Myeongjo', serif;
+      font-size: 22px;
+      margin: 0 0 10px;
+      font-weight: 700;
+    }
+    .success-card p {
+      color: #8b7355;
+      margin-bottom: 32px;
+      font-size: 14px;
+    }
+    .success-card .btn-primary {
+      width: auto;
+      padding: 12px 28px;
+    }
+
+    /* Admin login */
+    .login-box {
+      max-width: 380px;
+      margin: 0 auto;
+      padding: 44px 28px;
+    }
+    .login-box h3 {
+      font-family: 'Nanum Myeongjo', serif;
+      font-size: 18px;
+      text-align: center;
+      margin: 0 0 6px;
+      font-weight: 700;
+    }
+    .login-box .pw-help {
+      text-align: center;
+      font-size: 12px;
+      color: #8b7355;
+      margin: 0 0 24px;
+    }
+    .login-box input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 15px;
+      border: 1px solid #e5dcc8;
+      background: #fff;
+      outline: none;
+      margin-bottom: 12px;
+      transition: border-color 0.15s;
+    }
+    .login-box input:focus {
+      border-color: #3d4f3a;
+    }
+
+    /* List header */
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .count-text {
+      font-size: 14px;
+      color: #8b7355;
+    }
+    .count-text strong {
+      color: #2d1f15;
+      font-weight: 700;
+    }
+
+    /* Submission cards */
+    .submission-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .submission-card {
+      background-color: #fdfaf3;
+      border: 1px solid #e5dcc8;
+      padding: 20px 22px;
+    }
+    .submission-card .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e5dcc8;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .id-line {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #3d4f3a;
+      color: #fff;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      font-weight: 500;
+    }
+    .district {
+      font-size: 13px;
+      color: #8b7355;
+    }
+    .person-name {
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'Nanum Myeongjo', serif;
+    }
+    .timestamp {
+      font-size: 11px;
+      color: #8b7355;
+      letter-spacing: 0.02em;
+    }
+    .request-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #2d1f15;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .empty-state, .loading-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #8b7355;
+      background-color: #fdfaf3;
+      border: 1px solid #e5dcc8;
+      font-size: 14px;
+    }
+
+    footer {
+      margin-top: 60px;
+      text-align: center;
+      font-size: 11px;
+      color: #8b7355;
+      letter-spacing: 0.05em;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Mobile adjustments */
+    @media (max-width: 480px) {
+      .container { padding: 32px 18px 60px; }
+      h1 { font-size: 26px; }
+      .card { padding: 24px 20px; }
+      .row { flex-direction: column; gap: 0; }
+      .row > div { flex: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="pre-title">Sungnam Church</div>
+      <h1>성남교회 장년회</h1>
+      <div class="subtitle">회원정보 요청 접수 시스템</div>
+      <div class="divider"></div>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" data-view="submit">정보 입력</button>
+      <button class="tab" data-view="admin">관리자 열람</button>
+    </div>
+
+    <!-- 정보 입력 -->
+    <div id="view-submit" class="view">
+      <div id="submit-form-container" class="card">
+        <div class="row">
+          <div>
+            <div class="field">
+              <label for="f-region">지역</label>
+              <input id="f-region" type="text" placeholder="예: 성남지역" maxlength="50" />
+            </div>
+          </div>
+          <div>
+            <div class="field">
+              <label for="f-district">구역</label>
+              <input id="f-district" type="text" placeholder="예: 3구역" maxlength="50" />
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-name">이름</label>
+          <input id="f-name" type="text" placeholder="이름을 입력해주세요" maxlength="50" />
+        </div>
+        <div class="field">
+          <label for="f-request">요청사항</label>
+          <textarea id="f-request" rows="4" placeholder="요청하실 내용을 자세히 적어주세요" maxlength="5000"></textarea>
+        </div>
+        <div id="submit-error" class="error hidden"></div>
+        <button id="submit-btn" class="btn-primary">제 출 하 기</button>
+      </div>
+
+      <div id="success-container" class="card success-card hidden">
+        <div class="success-icon">✓</div>
+        <h2>접수가 완료되었습니다</h2>
+        <p>소중한 정보 감사합니다.</p>
+        <button id="new-submission-btn" class="btn-primary">새 정보 입력하기</button>
+      </div>
+    </div>
+
+    <!-- 관리자 -->
+    <div id="view-admin" class="view hidden">
+      <div id="login-container" class="card login-box">
+        <h3>관리자 인증</h3>
+        <p class="pw-help">관리자 비밀번호를 입력해주세요</p>
+        <input id="admin-pw" type="password" placeholder="비밀번호" autocomplete="current-password" />
+        <div id="login-error" class="error hidden"></div>
+        <button id="login-btn" class="btn-primary">확 인</button>
+      </div>
+
+      <div id="list-container" class="hidden">
+        <div class="list-header">
+          <div class="count-text">총 <strong id="count">0</strong>건의 접수</div>
+          <button id="refresh-btn" class="btn-outline">새로고침</button>
+        </div>
+        <div id="list-body"></div>
+      </div>
+    </div>
+
+    <footer>© 성남교회 장년회</footer>
+  </div>
+
+  <script>
+    let adminPassword = "";
+
+    // Tab switching
+    const tabs = document.querySelectorAll(".tab");
+    const views = document.querySelectorAll(".view");
+    tabs.forEach(t => {
+      t.addEventListener("click", () => {
+        tabs.forEach(x => x.classList.remove("active"));
+        t.classList.add("active");
+        views.forEach(v => v.classList.add("hidden"));
+        document.getElementById("view-" + t.dataset.view).classList.remove("hidden");
+      });
+    });
+
+    // Submit form
+    const submitBtn = document.getElementById("submit-btn");
+    const submitError = document.getElementById("submit-error");
+
+    submitBtn.addEventListener("click", async () => {
+      const region = document.getElementById("f-region").value.trim();
+      const district = document.getElementById("f-district").value.trim();
+      const name = document.getElementById("f-name").value.trim();
+      const request = document.getElementById("f-request").value.trim();
+
+      if (!region || !district || !name || !request) {
+        submitError.textContent = "모든 항목을 입력해주세요.";
+        submitError.classList.remove("hidden");
+        return;
+      }
+
+      submitError.classList.add("hidden");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "제출 중...";
+
+      try {
+        const res = await fetch("/api/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ region, district, name, request }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || "제출 실패");
+
+        document.getElementById("submit-form-container").classList.add("hidden");
+        document.getElementById("success-container").classList.remove("hidden");
+
+        // Reset form
+        document.getElementById("f-region").value = "";
+        document.getElementById("f-district").value = "";
+        document.getElementById("f-name").value = "";
+        document.getElementById("f-request").value = "";
+      } catch (e) {
+        submitError.textContent = "제출 중 오류가 발생했습니다. 다시 시도해주세요.";
+        submitError.classList.remove("hidden");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "제 출 하 기";
+      }
+    });
+
+    document.getElementById("new-submission-btn").addEventListener("click", () => {
+      document.getElementById("success-container").classList.add("hidden");
+      document.getElementById("submit-form-container").classList.remove("hidden");
+    });
+
+    // Admin login
+    const loginBtn = document.getElementById("login-btn");
+    const loginError = document.getElementById("login-error");
+    const pwInput = document.getElementById("admin-pw");
+
+    pwInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") loginBtn.click();
+    });
+
+    loginBtn.addEventListener("click", async () => {
+      const pw = pwInput.value;
+      if (!pw) {
+        loginError.textContent = "비밀번호를 입력해주세요.";
+        loginError.classList.remove("hidden");
+        return;
+      }
+      loginError.classList.add("hidden");
+      loginBtn.disabled = true;
+
+      try {
+        const res = await fetch("/api/list", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: pw }),
+        });
+        const data = await res.json();
+        if (res.status === 401) {
+          loginError.textContent = "비밀번호가 올바르지 않습니다.";
+          loginError.classList.remove("hidden");
+          return;
+        }
+        if (!res.ok || !data.ok) throw new Error(data.error || "오류");
+
+        adminPassword = pw;
+        document.getElementById("login-container").classList.add("hidden");
+        document.getElementById("list-container").classList.remove("hidden");
+        renderSubmissions(data.submissions);
+        pwInput.value = "";
+      } catch (e) {
+        loginError.textContent = "오류가 발생했습니다. 다시 시도해주세요.";
+        loginError.classList.remove("hidden");
+      } finally {
+        loginBtn.disabled = false;
+      }
+    });
+
+    // Refresh
+    document.getElementById("refresh-btn").addEventListener("click", async () => {
+      const btn = document.getElementById("refresh-btn");
+      btn.disabled = true;
+      btn.textContent = "조회 중...";
+      try {
+        const res = await fetch("/api/list", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: adminPassword }),
+        });
+        const data = await res.json();
+        if (data.ok) renderSubmissions(data.submissions);
+      } catch (e) {} finally {
+        btn.disabled = false;
+        btn.textContent = "새로고침";
+      }
+    });
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[c]));
+    }
+
+    function formatDate(iso) {
+      const d = new Date(iso);
+      const pad = (n) => String(n).padStart(2, "0");
+      return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    function renderSubmissions(submissions) {
+      const count = document.getElementById("count");
+      const body = document.getElementById("list-body");
+      count.textContent = submissions.length;
+
+      if (submissions.length === 0) {
+        body.innerHTML = '<div class="empty-state">아직 접수된 정보가 없습니다.</div>';
+        return;
+      }
+
+      body.innerHTML = '<div class="submission-list">' +
+        submissions.map(s => `
+          <div class="submission-card">
+            <div class="meta">
+              <div class="id-line">
+                <span class="badge">${escapeHtml(s.region)}</span>
+                <span class="district">${escapeHtml(s.district)}</span>
+                <span class="person-name">${escapeHtml(s.name)}</span>
+              </div>
+              <span class="timestamp">${formatDate(s.submittedAt)}</span>
+            </div>
+            <div class="request-text">${escapeHtml(s.request)}</div>
+          </div>
+        `).join("") +
+      '</div>';
+    }
+  </script>
+</body>
+</html>
